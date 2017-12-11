@@ -94,8 +94,13 @@ class Description extends Component {
             items => d3mean(items,
                             d => d.base_salary) - medians[items[0].countyID][0].medianIncome);
 
-        let best = ordered[ordered.length-1],
-            countyMedian = medians[best[0].countyID][0].medianIncome;
+        if(ordered.length > 0) {
+          let best = ordered[ordered.length-1]
+        } else {
+          let best
+        }
+
+        let countyMedian = medians[best[0].countyID][0].medianIncome
 
         const byCity = _.groupBy(best, 'city');
 

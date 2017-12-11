@@ -8,7 +8,7 @@ export default class MedianLine extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.updatD3(newProps)
+    this.updateD3(newProps)
   }
 
   updateD3 = (props) => {

@@ -13,7 +13,7 @@ export default class Controls extends Component {
     jobTitle: "*"
   }
 
-  updateYearFilter(year, reset) {
+  updateYearFilter = (year, reset) => {
     let filter = (d) => d.submit_date.getFullYear() === year
 
     if(reset || !year) {
@@ -23,7 +23,7 @@ export default class Controls extends Component {
 
     this.setState({yearFilter: filter, year: year})
   }
-  updateJobTitleFilter(title, reset) {
+  updateJobTitleFilter = (title, reset) => {
     let filter = d => d.clean_job_title === title
 
     if(reset || !title) {
@@ -33,8 +33,15 @@ export default class Controls extends Component {
 
     this.setState({jobTitleFilter: filter, jobTitle: title})
   }
-  updateUSstateFilter(USstate, reset) {
-    
+  updateUSstateFilter = (USstate, reset) => {
+    let filter = d => d.USstate === USstate
+
+    if(reset || !USstate) {
+      filter = () => true
+      USstate = "*"
+    }
+
+    this.setState({USstateFilter: filter, USstate: USstate})
   }
   componentDidUpdate() {
     this.reportUpdateUpTheChain()
@@ -44,9 +51,13 @@ export default class Controls extends Component {
     this.props.updateDataFilter(
       ((filters) => {
         return (d) => filters.yearFilter(d)
+                    && filters.jobTitleFilter(d)
+                    && filters.USstateFilter(d)
       })(this.state),
       {
-        year: this.state.year
+        USstate: this.state.USstate,
+        year: this.state.year,
+        jobTitle: this.state.jobTitle
       }
     )
   }
@@ -55,16 +66,25 @@ export default class Controls extends Component {
   }
   render() {
     const data = this.props.data,
-          now = new Date(),
-          years = now.getFullYear()// new Set(data.map(d => d.submit_date.getFullYear()))
-          console.log(data)
+          years = new Set(data.map(d => d.submit_date.getFullYear())),
+          jobTitles = new Set(data.map(d => d.clean_job_title)),
+          USstates = new Set(data.map(d => d.USstate))
 
     return (
       <div>
         <ControlRow data={data}
-                    toggleNames={Array.from(USstates.values())}
+                    toggleNames={Array.from(years.values())}
                     picked={this.state.year}
                     updateDataFilter={this.updateYearFilter} />
+        <ControlRow data={data}
+                    toggleNames={Array.from(jobTitles.values())}
+                    picked={this.state.jobTitle}
+                    updateDataFilter={this.updateJobTitleFilter} />
+        <ControlRow data={data}
+                    toggleNames={Array.from(USstates.values())}
+                    picked={this.state.USstate}
+                    updateDataFilter={this.updateUSstateFilter}
+                    capitalize="true" />
       </div>
     )
   }

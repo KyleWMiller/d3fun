@@ -71,8 +71,8 @@ class App extends Component {
             medianHousehold = this.state.medianIncomesByUSState['US'][0].MedianIncome
 
         if(this.state.filteredBy.USstate !== '*') {
-          zoom = this. state.filteredBy.USstate
-          medianHousehold = d3.mean(this.state.medianIncomeByUSSState[zoom], d => d.medianIncome)
+          zoom = this.state.filteredBy.USstate
+          medianHousehold = d3.mean(this.state.medianIncomesByUSState[zoom], d => d.medianIncome)
         }
 
 
