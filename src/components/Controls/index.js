@@ -13,6 +13,20 @@ export default class Controls extends Component {
     jobTitle: "*"
   }
 
+  componentDidMount() {
+    let [year, USstate, jobTitle] = window.location.hash.replace("#","").split("-")
+
+    if(year !== "*" && year) {
+      this.updateYearFilter(Number(year))
+    }
+    if(USstate !== "*" && USstate) {
+      this.updateUSstateFilter(USstate)
+    }
+    if(jobTitle !== "*" && jobTitle) {
+      this.updateJobTitleFilter(jobTitle)
+    }
+  }
+
   updateYearFilter = (year, reset) => {
     let filter = (d) => d.submit_date.getFullYear() === year
 
@@ -43,9 +57,6 @@ export default class Controls extends Component {
 
     this.setState({USstateFilter: filter, USstate: USstate})
   }
-  componentDidUpdate() {
-    this.reportUpdateUpTheChain()
-  }
 
   reportUpdateUpTheChain = () => {
     this.props.updateDataFilter(
@@ -61,9 +72,19 @@ export default class Controls extends Component {
       }
     )
   }
+
   shouldComponentUpdate(nextProps, nextState) {
     return!_.isEqual(this.state, nextState)
   }
+
+  componentDidUpdate() {
+    window.location.hash = [this.state.year || "*",
+    this.state.USstate || "*",
+    this.state.jobTitle || "*"].join("-")
+    this.reportUpdateUpTheChain()
+  }
+
+
   render() {
     const data = this.props.data,
           years = new Set(data.map(d => d.submit_date.getFullYear())),
